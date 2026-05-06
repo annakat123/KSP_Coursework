@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+</head>
+<body>
+    <header>
+        <h1>Вход в систему</h1>
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="request.html">Новая заявка</a>
+            <a href="requests.html">Список заявок</a>
+            <a href="login.html">Вход</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Авторизация</h2>
+            <form action="#" method="post">
+                <!-- Simple demo login form -->
+                <p>
+                    <label for="email">Email</label><br>
+                    <input type="email" id="email" name="email" placeholder="user@mail.ru" required>
+                </p>
+
+                <p>
+                    <label for="password">Пароль</label><br>
+                    <input type="password" id="password" name="password" required>
+                </p>
+
+                <p>
+                    <label for="role">Роль</label><br>
+                    <select id="role" name="role">
+                        <option value="client">Клиент</option>
+                        <option value="admin">Администратор</option>
+                    </select>
+                </p>
+
+                <button type="submit">Войти</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>Проверка логина будет добавлена в серверной части.</p>
+    </footer>
+</body>
+</html>

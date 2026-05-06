@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новая заявка</title>
+</head>
+<body>
+    <header>
+        <h1>Новая заявка</h1>
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="request.html">Новая заявка</a>
+            <a href="requests.html">Список заявок</a>
+            <a href="login.html">Вход</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Данные заявки</h2>
+            <form action="#" method="post">
+                <!-- Пока форма статическая, обработка появится позже -->
+                <p>
+                    <label for="clientName">ФИО заявителя</label><br>
+                    <input type="text" id="clientName" name="clientName" placeholder="Иванов Иван" required>
+                </p>
+
+                <p>
+                    <label for="phone">Телефон</label><br>
+                    <input type="tel" id="phone" name="phone" placeholder="+7 900 000-00-00">
+                </p>
+
+                <p>
+                    <label for="vehicle">Машина или техника</label><br>
+                    <input type="text" id="vehicle" name="vehicle" placeholder="КамАЗ, автобус, служебный автомобиль" required>
+                </p>
+
+                <p>
+                    <label for="plateNumber">Госномер</label><br>
+                    <input type="text" id="plateNumber" name="plateNumber" placeholder="А123ВС">
+                </p>
+
+                <p>
+                    <label for="partName">Деталь</label><br>
+                    <input type="text" id="partName" name="partName" placeholder="Форсунка, фильтр, насос">
+                </p>
+
+                <p>
+                    <label for="problemType">Тип проблемы</label><br>
+                    <select id="problemType" name="problemType">
+                        <option value="diagnostics">Диагностика</option>
+                        <option value="repair">Ремонт</option>
+                        <option value="part">Проблема с деталью</option>
+                        <option value="other">Другое</option>
+                    </select>
+                </p>
+
+                <p>
+                    <label for="description">Описание проблемы</label><br>
+                    <textarea id="description" name="description" rows="6" placeholder="Коротко опишите, что случилось" required></textarea>
+                </p>
+
+                <p>
+                    <label for="photo">Фото или документ</label><br>
+                    <input type="file" id="photo" name="photo">
+                </p>
+
+                <button type="submit">Отправить заявку</button>
+                <button type="reset">Очистить</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>Данные пока никуда не отправляются, это первый вариант формы.</p>
+    </footer>
+</body>
+</html>

@@ -32,3 +32,7 @@ public/     HTML, CSS и обычный JavaScript
 src/        React-часть
 uploads/    файлы пользователей
 ```
+
+## Запуск
+
+Пока проект можно открыть как обычные HTML-страницы. Главное  находится в `public/index.html`.
