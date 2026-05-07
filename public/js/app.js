@@ -1,7 +1,32 @@
 const REQUEST_DRAFT_KEY = 'requestDraft';
 
+const sampleRequests = [
+    {
+        id: 1,
+        date: '06.05.2026',
+        vehicle: 'КамАЗ',
+        problem: 'Нужно проверить форсунку',
+        status: 'Новая'
+    },
+    {
+        id: 2,
+        date: '06.05.2026',
+        vehicle: 'Служебный автомобиль',
+        problem: 'Не заводится после простоя',
+        status: 'Не хватает данных'
+    },
+    {
+        id: 3,
+        date: '06.05.2026',
+        vehicle: 'Автобус',
+        problem: 'Плановое обслуживание',
+        status: 'Принято'
+    }
+];
+
 document.addEventListener('DOMContentLoaded', function () {
     initRequestForm();
+    renderRequestsTable();
 });
 
 function initRequestForm() {
@@ -100,6 +125,31 @@ function loadRequestDraft(form) {
 
 function clearRequestDraft() {
     localStorage.removeItem(REQUEST_DRAFT_KEY);
+}
+
+function renderRequestsTable() {
+    const tableBody = document.getElementById('requestsTableBody');
+
+    if (!tableBody) {
+        return;
+    }
+
+    tableBody.innerHTML = '';
+
+    sampleRequests.forEach(function (request) {
+        const row = document.createElement('tr');
+
+        // Пока данные тестовые, потом будут приходить из API.
+        row.innerHTML = `
+            <td>${request.id}</td>
+            <td>${request.date}</td>
+            <td>${request.vehicle}</td>
+            <td>${request.problem}</td>
+            <td>${request.status}</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
 }
 
 function markError(field) {
