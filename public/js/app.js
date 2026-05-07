@@ -27,7 +27,8 @@ const sampleRequests = [
 document.addEventListener('DOMContentLoaded', function () {
     initRequestForm();
     initRequestFilters();
-    renderRequestsTable(sampleRequests);
+    initRequestActions();
+    refreshRequestsTable();
 });
 
 function initRequestForm() {
@@ -136,16 +137,48 @@ function initRequestFilters() {
     }
 
     statusFilter.addEventListener('change', function () {
-        const selectedStatus = statusFilter.value;
-        let filteredRequests = sampleRequests;
+        refreshRequestsTable();
+    });
+}
 
-        if (selectedStatus !== 'all') {
-            filteredRequests = sampleRequests.filter(function (request) {
-                return request.status === selectedStatus;
-            });
+function initRequestActions() {
+    const tableBody = document.getElementById('requestsTableBody');
+
+    if (!tableBody) {
+        return;
+    }
+
+    tableBody.addEventListener('click', function (event) {
+        if (!event.target.classList.contains('accept-request')) {
+            return;
         }
 
-        renderRequestsTable(filteredRequests);
+        const requestId = Number(event.target.dataset.id);
+        const request = sampleRequests.find(function (item) {
+            return item.id === requestId;
+        });
+
+        if (request) {
+            // Меняем только на странице, без сохранения на сервер.
+            request.status = 'Принято';
+            refreshRequestsTable();
+        }
+    });
+}
+
+function refreshRequestsTable() {
+    renderRequestsTable(getFilteredRequests());
+}
+
+function getFilteredRequests() {
+    const statusFilter = document.getElementById('statusFilter');
+
+    if (!statusFilter || statusFilter.value === 'all') {
+        return sampleRequests;
+    }
+
+    return sampleRequests.filter(function (request) {
+        return request.status === statusFilter.value;
     });
 }
 
@@ -159,12 +192,15 @@ function renderRequestsTable(requests) {
     tableBody.innerHTML = '';
 
     if (requests.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5">Заявки не найдены</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="6">Заявки не найдены</td></tr>';
         return;
     }
 
     requests.forEach(function (request) {
         const row = document.createElement('tr');
+        const action = request.status === 'Принято'
+            ? '-'
+            : `<button type="button" class="accept-request" data-id="${request.id}">Принять</button>`;
 
         // Пока данные тестовые, потом будут приходить из API.
         row.innerHTML = `
@@ -173,6 +209,7 @@ function renderRequestsTable(requests) {
             <td>${request.vehicle}</td>
             <td>${request.problem}</td>
             <td>${request.status}</td>
+            <td>${action}</td>
         `;
 
         tableBody.appendChild(row);

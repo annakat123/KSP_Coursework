@@ -90,6 +90,11 @@ button:hover {
     opacity: 0.9;
 }
 
+table button {
+    padding: 6px 10px;
+    margin: 0;
+}
+
 .form-message {
     min-height: 22px;
     color: #2d6a2d;
