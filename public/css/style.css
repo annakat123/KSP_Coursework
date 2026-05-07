@@ -49,6 +49,10 @@ h2 {
     color: #28445f;
 }
 
+.filter-row {
+    margin-bottom: 16px;
+}
+
 input,
 select,
 textarea {

@@ -26,7 +26,8 @@ const sampleRequests = [
 
 document.addEventListener('DOMContentLoaded', function () {
     initRequestForm();
-    renderRequestsTable();
+    initRequestFilters();
+    renderRequestsTable(sampleRequests);
 });
 
 function initRequestForm() {
@@ -127,7 +128,28 @@ function clearRequestDraft() {
     localStorage.removeItem(REQUEST_DRAFT_KEY);
 }
 
-function renderRequestsTable() {
+function initRequestFilters() {
+    const statusFilter = document.getElementById('statusFilter');
+
+    if (!statusFilter) {
+        return;
+    }
+
+    statusFilter.addEventListener('change', function () {
+        const selectedStatus = statusFilter.value;
+        let filteredRequests = sampleRequests;
+
+        if (selectedStatus !== 'all') {
+            filteredRequests = sampleRequests.filter(function (request) {
+                return request.status === selectedStatus;
+            });
+        }
+
+        renderRequestsTable(filteredRequests);
+    });
+}
+
+function renderRequestsTable(requests) {
     const tableBody = document.getElementById('requestsTableBody');
 
     if (!tableBody) {
@@ -136,7 +158,12 @@ function renderRequestsTable() {
 
     tableBody.innerHTML = '';
 
-    sampleRequests.forEach(function (request) {
+    if (requests.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5">Заявки не найдены</td></tr>';
+        return;
+    }
+
+    requests.forEach(function (request) {
         const row = document.createElement('tr');
 
         // Пока данные тестовые, потом будут приходить из API.

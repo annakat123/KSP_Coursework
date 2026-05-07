@@ -20,6 +20,16 @@
     <main>
         <section>
             <h2>Заявки на проверку</h2>
+            <p class="filter-row">
+                <label for="statusFilter">Статус</label><br>
+                <select id="statusFilter">
+                    <option value="all">Все заявки</option>
+                    <option value="Новая">Новая</option>
+                    <option value="Не хватает данных">Не хватает данных</option>
+                    <option value="Принято">Принято</option>
+                </select>
+            </p>
+
             <table>
                 <thead>
                     <tr>
