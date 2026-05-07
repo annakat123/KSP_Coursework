@@ -1,3 +1,5 @@
+const REQUEST_DRAFT_KEY = 'requestDraft';
+
 document.addEventListener('DOMContentLoaded', function () {
     initRequestForm();
 });
@@ -10,6 +12,12 @@ function initRequestForm() {
     }
 
     const message = document.getElementById('formMessage');
+
+    loadRequestDraft(form);
+
+    form.addEventListener('input', function () {
+        saveRequestDraft(form);
+    });
 
     form.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -45,6 +53,47 @@ function initRequestForm() {
         // Later this data will go to PHP API.
         showMessage(message, 'Заявка заполнена корректно. Отправка появится позже.', false);
     });
+}
+
+function saveRequestDraft(form) {
+    const draft = {
+        clientName: form.clientName.value,
+        phone: form.phone.value,
+        vehicle: form.vehicle.value,
+        plateNumber: form.plateNumber.value,
+        partName: form.partName.value,
+        problemType: form.problemType.value,
+        description: form.description.value
+    };
+
+    localStorage.setItem(REQUEST_DRAFT_KEY, JSON.stringify(draft));
+}
+
+function loadRequestDraft(form) {
+    const savedDraft = localStorage.getItem(REQUEST_DRAFT_KEY);
+
+    if (!savedDraft) {
+        return;
+    }
+
+    try {
+        const draft = JSON.parse(savedDraft);
+
+        form.clientName.value = draft.clientName || '';
+        form.phone.value = draft.phone || '';
+        form.vehicle.value = draft.vehicle || '';
+        form.plateNumber.value = draft.plateNumber || '';
+        form.partName.value = draft.partName || '';
+        form.problemType.value = draft.problemType || 'diagnostics';
+        form.description.value = draft.description || '';
+    } catch (error) {
+        // If draft is broken, just start clean.
+        clearRequestDraft();
+    }
+}
+
+function clearRequestDraft() {
+    localStorage.removeItem(REQUEST_DRAFT_KEY);
 }
 
 function markError(field) {
