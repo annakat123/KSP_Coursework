@@ -60,6 +60,11 @@ textarea {
     font: inherit;
 }
 
+.field-error {
+    border-color: #b00020;
+    background: #fff5f5;
+}
+
 textarea {
     resize: vertical;
 }
@@ -79,6 +84,15 @@ button[type="reset"] {
 
 button:hover {
     opacity: 0.9;
+}
+
+.form-message {
+    min-height: 22px;
+    color: #2d6a2d;
+}
+
+.form-message.error {
+    color: #b00020;
 }
 
 table {
