@@ -19,6 +19,12 @@ function initRequestForm() {
         saveRequestDraft(form);
     });
 
+    form.addEventListener('reset', function () {
+        clearRequestDraft();
+        clearErrors(form);
+        showMessage(message, '', false);
+    });
+
     form.addEventListener('submit', function (event) {
         event.preventDefault();
 
