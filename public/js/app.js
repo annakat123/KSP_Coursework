@@ -1,34 +1,11 @@
 const REQUEST_DRAFT_KEY = 'requestDraft';
+const REQUESTS_API_URL = '../api/requests.php';
 
-const sampleRequests = [
-    {
-        id: 1,
-        date: '06.05.2026',
-        vehicle: 'КамАЗ',
-        problem: 'Нужно проверить форсунку',
-        status: 'Новая'
-    },
-    {
-        id: 2,
-        date: '06.05.2026',
-        vehicle: 'Служебный автомобиль',
-        problem: 'Не заводится после простоя',
-        status: 'Не хватает данных'
-    },
-    {
-        id: 3,
-        date: '06.05.2026',
-        vehicle: 'Автобус',
-        problem: 'Плановое обслуживание',
-        status: 'Принято'
-    }
-];
+let requests = [];
 
 document.addEventListener('DOMContentLoaded', function () {
     initRequestForm();
-    initRequestFilters();
-    initRequestActions();
-    refreshRequestsTable();
+    initRequestsPage();
 });
 
 function initRequestForm() {
@@ -129,6 +106,18 @@ function clearRequestDraft() {
     localStorage.removeItem(REQUEST_DRAFT_KEY);
 }
 
+function initRequestsPage() {
+    const tableBody = document.getElementById('requestsTableBody');
+
+    if (!tableBody) {
+        return;
+    }
+
+    initRequestFilters();
+    initRequestActions();
+    loadRequests();
+}
+
 function initRequestFilters() {
     const statusFilter = document.getElementById('statusFilter');
 
@@ -154,7 +143,7 @@ function initRequestActions() {
         }
 
         const requestId = Number(event.target.dataset.id);
-        const request = sampleRequests.find(function (item) {
+        const request = requests.find(function (item) {
             return item.id === requestId;
         });
 
@@ -166,6 +155,26 @@ function initRequestActions() {
     });
 }
 
+function loadRequests() {
+    renderTableMessage('Загрузка заявок...');
+
+    fetch(REQUESTS_API_URL)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error('Не удалось загрузить заявки');
+            }
+
+            return response.json();
+        })
+        .then(function (data) {
+            requests = data;
+            refreshRequestsTable();
+        })
+        .catch(function () {
+            renderTableMessage('Ошибка загрузки заявок. Проверьте PHP сервер.');
+        });
+}
+
 function refreshRequestsTable() {
     renderRequestsTable(getFilteredRequests());
 }
@@ -174,10 +183,10 @@ function getFilteredRequests() {
     const statusFilter = document.getElementById('statusFilter');
 
     if (!statusFilter || statusFilter.value === 'all') {
-        return sampleRequests;
+        return requests;
     }
 
-    return sampleRequests.filter(function (request) {
+    return requests.filter(function (request) {
         return request.status === statusFilter.value;
     });
 }
@@ -214,6 +223,14 @@ function renderRequestsTable(requests) {
 
         tableBody.appendChild(row);
     });
+}
+
+function renderTableMessage(text) {
+    const tableBody = document.getElementById('requestsTableBody');
+
+    if (tableBody) {
+        tableBody.innerHTML = `<tr><td colspan="6">${text}</td></tr>`;
+    }
 }
 
 function markError(field) {
