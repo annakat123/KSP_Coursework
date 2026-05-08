@@ -1,6 +1,7 @@
 ### Project ###
 data/*.json
 !data/.gitkeep
+!data/requests.json
 uploads/*
 !uploads/.gitkeep
 logs/*
