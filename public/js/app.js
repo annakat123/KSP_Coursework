@@ -60,9 +60,57 @@ function initRequestForm() {
             return;
         }
 
-        // Later this data will go to PHP API.
-        showMessage(message, 'Заявка заполнена корректно. Отправка появится позже.', false);
+        sendRequestToApi(form, message);
     });
+}
+
+function sendRequestToApi(form, message) {
+    showMessage(message, 'Отправка заявки...', false);
+
+    fetch(REQUESTS_API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(getRequestFormData(form))
+    })
+        .then(function (response) {
+            return response.json().then(function (data) {
+                if (!response.ok) {
+                    throw new Error(getApiErrorText(data));
+                }
+
+                return data;
+            });
+        })
+        .then(function () {
+            clearRequestDraft();
+            form.reset();
+            showMessage(message, 'Заявка отправлена и сохранена.', false);
+        })
+        .catch(function (error) {
+            showMessage(message, error.message || 'Не удалось отправить заявку.', true);
+        });
+}
+
+function getRequestFormData(form) {
+    return {
+        clientName: form.clientName.value.trim(),
+        phone: form.phone.value.trim(),
+        vehicle: form.vehicle.value.trim(),
+        plateNumber: form.plateNumber.value.trim(),
+        partName: form.partName.value.trim(),
+        problemType: form.problemType.value,
+        description: form.description.value.trim()
+    };
+}
+
+function getApiErrorText(data) {
+    if (data.errors) {
+        return data.errors.join(' ');
+    }
+
+    return data.error || 'Ошибка API';
 }
 
 function saveRequestDraft(form) {

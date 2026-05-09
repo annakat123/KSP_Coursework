@@ -44,3 +44,5 @@ C:\xampp\php\php.exe -S localhost:8000
 ```
 
 После этого главная страница будет доступна по адресу `http://localhost:8000/public/index.html`.
+
+Форма заявки отправляет данные в `api/requests.php`, а список заявок загружает их из этого же API.
