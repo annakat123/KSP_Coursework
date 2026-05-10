@@ -196,11 +196,44 @@ function initRequestActions() {
         });
 
         if (request) {
-            // Меняем только на странице, без сохранения на сервер.
-            request.status = 'Принято';
-            refreshRequestsTable();
+            updateRequestStatus(request.id, 'Принято');
         }
     });
+}
+
+function updateRequestStatus(requestId, status) {
+    fetch(REQUESTS_API_URL, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            id: requestId,
+            status: status
+        })
+    })
+        .then(function (response) {
+            return response.json().then(function (data) {
+                if (!response.ok) {
+                    throw new Error(getApiErrorText(data));
+                }
+
+                return data;
+            });
+        })
+        .then(function (updatedRequest) {
+            const request = requests.find(function (item) {
+                return item.id === updatedRequest.id;
+            });
+
+            if (request) {
+                request.status = updatedRequest.status;
+                refreshRequestsTable();
+            }
+        })
+        .catch(function () {
+            alert('Не удалось обновить статус заявки.');
+        });
 }
 
 function loadRequests() {

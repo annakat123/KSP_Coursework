@@ -65,6 +65,38 @@ if ($method === 'POST') {
     sendJson($newRequest, 201);
 }
 
+if ($method === 'PATCH') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (!is_array($data)) {
+        sendJson(['error' => 'Некорректные данные'], 400);
+    }
+
+    $requestId = (int)($data['id'] ?? 0);
+    $newStatus = trim($data['status'] ?? '');
+    $allowedStatuses = ['Новая', 'Не хватает данных', 'Принято'];
+
+    if ($requestId <= 0 || !in_array($newStatus, $allowedStatuses, true)) {
+        sendJson(['error' => 'Неверный статус заявки'], 422);
+    }
+
+    $requests = readRequests();
+
+    foreach ($requests as &$request) {
+        if ((int)$request['id'] === $requestId) {
+            $request['status'] = $newStatus;
+
+            if (!saveRequests($requests)) {
+                sendJson(['error' => 'Не удалось обновить заявку'], 500);
+            }
+
+            sendJson($request);
+        }
+    }
+
+    sendJson(['error' => 'Заявка не найдена'], 404);
+}
+
 sendJson(['error' => 'Метод не поддерживается'], 405);
 
 function sendJson(array $data, int $statusCode = 200): void

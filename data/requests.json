@@ -19,5 +19,17 @@
         "vehicle": "Автобус",
         "problem": "Плановое обслуживание",
         "status": "Принято"
+    },
+    {
+        "id": 4,
+        "date": "09.05.2026",
+        "clientName": "Иванов Иван Анатольевич",
+        "phone": "19862203967",
+        "vehicle": "Камаз",
+        "plateNumber": "А123СВ",
+        "partName": "фильтр",
+        "problemType": "diagnostics",
+        "problem": "поломалося всё, помргите.",
+        "status": "Новая"
     }
 ]
