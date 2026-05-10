@@ -16,6 +16,7 @@ function initRequestForm() {
     }
 
     const message = document.getElementById('formMessage');
+    const result = document.getElementById('requestResult');
 
     loadRequestDraft(form);
 
@@ -27,6 +28,7 @@ function initRequestForm() {
         clearRequestDraft();
         clearErrors(form);
         showMessage(message, '', false);
+        showRequestResult(result, null);
     });
 
     form.addEventListener('submit', function (event) {
@@ -60,12 +62,13 @@ function initRequestForm() {
             return;
         }
 
-        sendRequestToApi(form, message);
+        sendRequestToApi(form, message, result);
     });
 }
 
-function sendRequestToApi(form, message) {
+function sendRequestToApi(form, message, result) {
     showMessage(message, 'Отправка заявки...', false);
+    showRequestResult(result, null);
 
     fetch(REQUESTS_API_URL, {
         method: 'POST',
@@ -83,10 +86,11 @@ function sendRequestToApi(form, message) {
                 return data;
             });
         })
-        .then(function () {
+        .then(function (newRequest) {
             clearRequestDraft();
             form.reset();
             showMessage(message, 'Заявка отправлена и сохранена.', false);
+            showRequestResult(result, newRequest);
         })
         .catch(function (error) {
             showMessage(message, error.message || 'Не удалось отправить заявку.', true);
@@ -111,6 +115,22 @@ function getApiErrorText(data) {
     }
 
     return data.error || 'Ошибка API';
+}
+
+function showRequestResult(element, request) {
+    if (!element) {
+        return;
+    }
+
+    if (!request) {
+        element.innerHTML = '';
+        return;
+    }
+
+    element.innerHTML = `
+        Заявка №${request.id} добавлена.
+        <a href="requests.html">Открыть список заявок</a>
+    `;
 }
 
 function saveRequestDraft(form) {

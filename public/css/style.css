@@ -104,6 +104,14 @@ table button {
     color: #b00020;
 }
 
+.request-result {
+    margin-top: 8px;
+}
+
+.request-result a {
+    color: #28445f;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
