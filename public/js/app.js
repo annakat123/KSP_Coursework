@@ -299,6 +299,7 @@ function renderRequestsTable(requests) {
         return;
     }
 
+    updateRequestsCount(requests.length);
     tableBody.innerHTML = '';
 
     if (requests.length === 0) {
@@ -332,6 +333,16 @@ function renderTableMessage(text) {
     if (tableBody) {
         tableBody.innerHTML = `<tr><td colspan="6">${text}</td></tr>`;
     }
+}
+
+function updateRequestsCount(visibleCount) {
+    const counter = document.getElementById('requestsCount');
+
+    if (!counter) {
+        return;
+    }
+
+    counter.textContent = `Показано заявок: ${visibleCount}. Всего в системе: ${requests.length}.`;
 }
 
 function markError(field) {

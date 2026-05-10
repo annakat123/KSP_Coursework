@@ -53,6 +53,11 @@ h2 {
     margin-bottom: 16px;
 }
 
+.requests-count {
+    margin-top: -6px;
+    color: #555;
+}
+
 input,
 select,
 textarea {
