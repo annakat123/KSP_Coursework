@@ -29,6 +29,13 @@
                     <option value="Принято">Принято</option>
                 </select>
             </p>
+            <p class="filter-row">
+                <label for="requestSearch">Поиск</label><br>
+                <input type="search" id="requestSearch" placeholder="Техника, проблема, заявитель или деталь">
+            </p>
+            <p>
+                <button type="button" id="resetFilters">Сбросить фильтры</button>
+            </p>
             <p id="requestsCount" class="requests-count">Заявки загружаются...</p>
 
             <table>
@@ -36,6 +43,7 @@
                     <tr>
                         <th>Номер</th>
                         <th>Дата</th>
+                        <th>Заявитель</th>
                         <th>Техника</th>
                         <th>Проблема</th>
                         <th>Статус</th>
@@ -44,7 +52,7 @@
                 </thead>
                 <tbody id="requestsTableBody">
                     <tr>
-                        <td colspan="6">Загрузка заявок...</td>
+                        <td colspan="7">Загрузка заявок...</td>
                     </tr>
                 </tbody>
             </table>

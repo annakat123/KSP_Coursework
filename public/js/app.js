@@ -188,14 +188,28 @@ function initRequestsPage() {
 
 function initRequestFilters() {
     const statusFilter = document.getElementById('statusFilter');
+    const searchInput = document.getElementById('requestSearch');
+    const resetButton = document.getElementById('resetFilters');
 
-    if (!statusFilter) {
-        return;
+    if (statusFilter) {
+        statusFilter.addEventListener('change', function () {
+            refreshRequestsTable();
+        });
     }
 
-    statusFilter.addEventListener('change', function () {
-        refreshRequestsTable();
-    });
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            refreshRequestsTable();
+        });
+    }
+
+    if (resetButton) {
+        resetButton.addEventListener('click', function () {
+            statusFilter.value = 'all';
+            searchInput.value = '';
+            refreshRequestsTable();
+        });
+    }
 }
 
 function initRequestActions() {
@@ -282,14 +296,32 @@ function refreshRequestsTable() {
 
 function getFilteredRequests() {
     const statusFilter = document.getElementById('statusFilter');
+    const searchInput = document.getElementById('requestSearch');
+    const selectedStatus = statusFilter ? statusFilter.value : 'all';
+    const searchText = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    let filteredRequests = requests;
 
-    if (!statusFilter || statusFilter.value === 'all') {
-        return requests;
+    if (selectedStatus !== 'all') {
+        filteredRequests = filteredRequests.filter(function (request) {
+            return request.status === selectedStatus;
+        });
     }
 
-    return requests.filter(function (request) {
-        return request.status === statusFilter.value;
-    });
+    if (searchText !== '') {
+        filteredRequests = filteredRequests.filter(function (request) {
+            // Не красиво, зато понятно: ищем сразу по нескольким полям.
+            const text = [
+                request.clientName || '',
+                request.vehicle || '',
+                request.problem || '',
+                request.partName || ''
+            ].join(' ').toLowerCase();
+
+            return text.includes(searchText);
+        });
+    }
+
+    return filteredRequests;
 }
 
 function renderRequestsTable(requests) {
@@ -303,7 +335,7 @@ function renderRequestsTable(requests) {
     tableBody.innerHTML = '';
 
     if (requests.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6">Заявки не найдены</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7">Заявки не найдены</td></tr>';
         return;
     }
 
@@ -317,6 +349,7 @@ function renderRequestsTable(requests) {
         row.innerHTML = `
             <td>${request.id}</td>
             <td>${request.date}</td>
+            <td>${request.clientName || '-'}</td>
             <td>${request.vehicle}</td>
             <td>${request.problem}</td>
             <td>${request.status}</td>
@@ -331,7 +364,7 @@ function renderTableMessage(text) {
     const tableBody = document.getElementById('requestsTableBody');
 
     if (tableBody) {
-        tableBody.innerHTML = `<tr><td colspan="6">${text}</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="7">${text}</td></tr>`;
     }
 }
 

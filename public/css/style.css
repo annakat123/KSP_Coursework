@@ -50,7 +50,7 @@ h2 {
 }
 
 .filter-row {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .requests-count {
@@ -98,6 +98,10 @@ button:hover {
 table button {
     padding: 6px 10px;
     margin: 0;
+}
+
+#resetFilters {
+    background: #777;
 }
 
 .form-message {
