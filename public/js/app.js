@@ -1,5 +1,6 @@
 const REQUEST_DRAFT_KEY = 'requestDraft';
 const REQUESTS_API_URL = '../api/requests.php';
+const PARTS_API_URL = '../api/parts.php';
 
 let requests = [];
 
@@ -19,6 +20,7 @@ function initRequestForm() {
     const result = document.getElementById('requestResult');
 
     loadRequestDraft(form);
+    initPartCheck(form);
 
     form.addEventListener('input', function () {
         saveRequestDraft(form);
@@ -64,6 +66,48 @@ function initRequestForm() {
 
         sendRequestToApi(form, message, result);
     });
+}
+
+function initPartCheck(form) {
+    const button = document.getElementById('checkPartButton');
+    const message = document.getElementById('partMessage');
+
+    if (!button || !message) {
+        return;
+    }
+
+    button.addEventListener('click', function () {
+        const partName = form.partName.value.trim();
+
+        if (partName === '') {
+            showPartMessage(message, 'Сначала введите название детали.', true);
+            return;
+        }
+
+        showPartMessage(message, 'Проверяем...', false);
+
+        fetch(`${PARTS_API_URL}?q=${encodeURIComponent(partName)}`)
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.found) {
+                    showPartMessage(message, `Найдена деталь: ${data.part.name}.`, false);
+                    return;
+                }
+
+                // Пока просто подсказка, добавление сделаем отдельным шагом.
+                showPartMessage(message, 'Такой детали нет. Можно будет отправить на добавление.', true);
+            })
+            .catch(function () {
+                showPartMessage(message, 'Не получилось проверить деталь.', true);
+            });
+    });
+}
+
+function showPartMessage(element, text, isError) {
+    element.textContent = text;
+    element.classList.toggle('error', isError);
 }
 
 function sendRequestToApi(form, message, result) {

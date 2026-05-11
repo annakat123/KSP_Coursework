@@ -95,6 +95,11 @@ button:hover {
     opacity: 0.9;
 }
 
+.small-button {
+    margin-top: 8px;
+    padding: 7px 10px;
+}
+
 table button {
     padding: 6px 10px;
     margin: 0;
@@ -119,6 +124,16 @@ table button {
 
 .request-result a {
     color: #28445f;
+}
+
+.part-message {
+    display: inline-block;
+    margin-left: 8px;
+    color: #2d6a2d;
+}
+
+.part-message.error {
+    color: #b00020;
 }
 
 table {
