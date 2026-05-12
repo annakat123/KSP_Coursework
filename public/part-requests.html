@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новые детали</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Заявки на новые детали</h1>
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="request.html">Новая заявка</a>
+            <a href="requests.html">Список заявок</a>
+            <a href="part-requests.html">Новые детали</a>
+            <a href="login.html">Вход</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Что предложили добавить</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Номер</th>
+                        <th>Дата</th>
+                        <th>Деталь</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody id="partRequestsTableBody">
+                    <tr>
+                        <td colspan="4">Загрузка...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>Позже отсюда можно будет добавлять детали в основной справочник.</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

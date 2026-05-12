@@ -1,12 +1,14 @@
 const REQUEST_DRAFT_KEY = 'requestDraft';
 const REQUESTS_API_URL = '../api/requests.php';
 const PARTS_API_URL = '../api/parts.php';
+const PART_REQUESTS_API_URL = '../api/part_requests.php';
 
 let requests = [];
 
 document.addEventListener('DOMContentLoaded', function () {
     initRequestForm();
     initRequestsPage();
+    initPartRequestsPage();
 });
 
 function initRequestForm() {
@@ -463,6 +465,49 @@ function updateRequestsCount(visibleCount) {
     }
 
     counter.textContent = `Показано заявок: ${visibleCount}. Всего в системе: ${requests.length}.`;
+}
+
+function initPartRequestsPage() {
+    const tableBody = document.getElementById('partRequestsTableBody');
+
+    if (!tableBody) {
+        return;
+    }
+
+    fetch(PART_REQUESTS_API_URL)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (items) {
+            renderPartRequests(items);
+        })
+        .catch(function () {
+            tableBody.innerHTML = '<tr><td colspan="4">Не удалось загрузить список</td></tr>';
+        });
+}
+
+function renderPartRequests(items) {
+    const tableBody = document.getElementById('partRequestsTableBody');
+
+    tableBody.innerHTML = '';
+
+    if (items.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4">Заявок на новые детали пока нет</td></tr>';
+        return;
+    }
+
+    items.forEach(function (item) {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.date}</td>
+            <td>${item.name}</td>
+            <td>${item.status}</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
 }
 
 function markError(field) {
