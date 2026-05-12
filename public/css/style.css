@@ -74,6 +74,10 @@ textarea {
     background: #fff5f5;
 }
 
+.hidden {
+    display: none;
+}
+
 textarea {
     resize: vertical;
 }

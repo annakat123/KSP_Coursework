@@ -3,7 +3,36 @@
 header('Content-Type: application/json; charset=utf-8');
 
 $partsFile = __DIR__ . '/../data/parts.json';
+$partRequestsFile = __DIR__ . '/../data/part_requests.json';
 $method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'POST') {
+    $data = json_decode(file_get_contents('php://input'), true);
+    $name = trim($data['name'] ?? '');
+
+    if ($name === '') {
+        sendJson(['error' => 'Название детали не заполнено'], 422);
+    }
+
+    $requests = readParts($partRequestsFile);
+    $ids = array_column($requests, 'id');
+    $nextId = $ids ? max($ids) + 1 : 1;
+
+    $newRequest = [
+        'id' => $nextId,
+        'name' => $name,
+        'date' => date('d.m.Y'),
+        'status' => 'Новая'
+    ];
+
+    $requests[] = $newRequest;
+
+    if (!saveJson($partRequestsFile, $requests)) {
+        sendJson(['error' => 'Не удалось сохранить деталь'], 500);
+    }
+
+    sendJson($newRequest, 201);
+}
 
 if ($method !== 'GET') {
     sendJson(['error' => 'Метод не поддерживается'], 405);
@@ -44,6 +73,17 @@ function readParts(string $file): array
     $parts = json_decode($content, true);
 
     return is_array($parts) ? $parts : [];
+}
+
+function saveJson(string $file, array $data): bool
+{
+    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+    if ($json === false) {
+        return false;
+    }
+
+    return file_put_contents($file, $json) !== false;
 }
 
 function sendJson(array $data, int $statusCode = 200): void

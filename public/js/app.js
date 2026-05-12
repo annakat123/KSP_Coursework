@@ -69,15 +69,17 @@ function initRequestForm() {
 }
 
 function initPartCheck(form) {
-    const button = document.getElementById('checkPartButton');
+    const checkButton = document.getElementById('checkPartButton');
+    const sendButton = document.getElementById('sendPartButton');
     const message = document.getElementById('partMessage');
 
-    if (!button || !message) {
+    if (!checkButton || !sendButton || !message) {
         return;
     }
 
-    button.addEventListener('click', function () {
+    checkButton.addEventListener('click', function () {
         const partName = form.partName.value.trim();
+        sendButton.classList.add('hidden');
 
         if (partName === '') {
             showPartMessage(message, 'Сначала введите название детали.', true);
@@ -96,13 +98,54 @@ function initPartCheck(form) {
                     return;
                 }
 
-                // Пока просто подсказка, добавление сделаем отдельным шагом.
-                showPartMessage(message, 'Такой детали нет. Можно будет отправить на добавление.', true);
+                showPartMessage(message, 'Такой детали нет. Можно отправить на добавление.', true);
+                sendButton.classList.remove('hidden');
             })
             .catch(function () {
                 showPartMessage(message, 'Не получилось проверить деталь.', true);
             });
     });
+
+    sendButton.addEventListener('click', function () {
+        const partName = form.partName.value.trim();
+
+        if (partName === '') {
+            showPartMessage(message, 'Название детали пустое.', true);
+            return;
+        }
+
+        sendPartRequest(partName, message, sendButton);
+    });
+}
+
+function sendPartRequest(partName, message, button) {
+    showPartMessage(message, 'Отправляем деталь...', false);
+
+    fetch(PARTS_API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: partName
+        })
+    })
+        .then(function (response) {
+            return response.json().then(function (data) {
+                if (!response.ok) {
+                    throw new Error(getApiErrorText(data));
+                }
+
+                return data;
+            });
+        })
+        .then(function () {
+            showPartMessage(message, 'Деталь отправлена на добавление.', false);
+            button.classList.add('hidden');
+        })
+        .catch(function (error) {
+            showPartMessage(message, error.message || 'Не удалось отправить деталь.', true);
+        });
 }
 
 function showPartMessage(element, text, isError) {

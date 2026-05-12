@@ -3,6 +3,7 @@ data/*.json
 !data/.gitkeep
 !data/requests.json
 !data/parts.json
+!data/part_requests.json
 uploads/*
 !uploads/.gitkeep
 logs/*
