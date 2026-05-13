@@ -474,6 +474,20 @@ function initPartRequestsPage() {
         return;
     }
 
+    tableBody.addEventListener('click', function (event) {
+        if (!event.target.classList.contains('add-part-request')) {
+            return;
+        }
+
+        addPartFromRequest(Number(event.target.dataset.id));
+    });
+
+    loadPartRequests();
+}
+
+function loadPartRequests() {
+    const tableBody = document.getElementById('partRequestsTableBody');
+
     fetch(PART_REQUESTS_API_URL)
         .then(function (response) {
             return response.json();
@@ -486,24 +500,55 @@ function initPartRequestsPage() {
         });
 }
 
+function addPartFromRequest(requestId) {
+    fetch(PART_REQUESTS_API_URL, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            id: requestId
+        })
+    })
+        .then(function (response) {
+            return response.json().then(function (data) {
+                if (!response.ok) {
+                    throw new Error(getApiErrorText(data));
+                }
+
+                return data;
+            });
+        })
+        .then(function () {
+            loadPartRequests();
+        })
+        .catch(function () {
+            alert('Не удалось добавить деталь в справочник.');
+        });
+}
+
 function renderPartRequests(items) {
     const tableBody = document.getElementById('partRequestsTableBody');
 
     tableBody.innerHTML = '';
 
     if (items.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="4">Заявок на новые детали пока нет</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="5">Заявок на новые детали пока нет</td></tr>';
         return;
     }
 
     items.forEach(function (item) {
         const row = document.createElement('tr');
+        const action = item.status === 'Добавлена'
+            ? '-'
+            : `<button type="button" class="add-part-request" data-id="${item.id}">Добавить</button>`;
 
         row.innerHTML = `
             <td>${item.id}</td>
             <td>${item.date}</td>
             <td>${item.name}</td>
             <td>${item.status}</td>
+            <td>${action}</td>
         `;
 
         tableBody.appendChild(row);
