@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/logger.php';
+
 header('Content-Type: application/json; charset=utf-8');
 
 $partRequestsFile = __DIR__ . '/../data/part_requests.json';
@@ -42,6 +44,7 @@ if ($method === 'PATCH') {
             sendJson(['error' => 'Не удалось сохранить изменения'], 500);
         }
 
+        writeLog('Деталь добавлена в справочник', $newPart['name']);
         sendJson([
             'request' => $request,
             'part' => $newPart

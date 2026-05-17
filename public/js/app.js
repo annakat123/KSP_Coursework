@@ -1,15 +1,132 @@
 const REQUEST_DRAFT_KEY = 'requestDraft';
+const AUTH_USER_KEY = 'currentUser';
 const REQUESTS_API_URL = '../api/requests.php';
 const PARTS_API_URL = '../api/parts.php';
 const PART_REQUESTS_API_URL = '../api/part_requests.php';
+const LOGS_API_URL = '../api/logs.php';
 
 let requests = [];
 
 document.addEventListener('DOMContentLoaded', function () {
+    initAuth();
+    initLoginForm();
     initRequestForm();
     initRequestsPage();
     initPartRequestsPage();
+    initLogsPage();
 });
+
+function initAuth() {
+    const user = getCurrentUser();
+    const nav = document.querySelector('nav');
+
+    if (!nav) {
+        return;
+    }
+
+    if (!isAdmin()) {
+        hideAdminLinks();
+    }
+
+    const label = document.createElement('span');
+    label.className = 'user-label';
+
+    if (user) {
+        label.textContent = `Пользователь: ${user.email} (${getRoleName(user.role)})`;
+    } else {
+        label.textContent = 'Вход не выполнен';
+    }
+
+    nav.appendChild(label);
+}
+
+function initLoginForm() {
+    const form = document.getElementById('loginForm');
+
+    if (!form) {
+        return;
+    }
+
+    const message = document.getElementById('loginMessage');
+    const logoutButton = document.getElementById('logoutButton');
+    const user = getCurrentUser();
+
+    if (user) {
+        form.email.value = user.email;
+        form.role.value = user.role;
+        showMessage(message, `Сейчас выбран ${getRoleName(user.role)}.`, false);
+    }
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const email = form.email.value.trim();
+        const password = form.password.value.trim();
+        const role = form.role.value;
+
+        if (email === '' || password.length < 3) {
+            showMessage(message, 'Введите email и пароль минимум из 3 символов.', true);
+            return;
+        }
+
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify({
+            email: email,
+            role: role
+        }));
+
+        showMessage(message, `Вход выполнен как ${getRoleName(role)}.`, false);
+        setTimeout(function () {
+            window.location.href = 'index.html';
+        }, 400);
+    });
+
+    logoutButton.addEventListener('click', function () {
+        localStorage.removeItem(AUTH_USER_KEY);
+        showMessage(message, 'Вы вышли из системы.', false);
+        form.password.value = '';
+    });
+}
+
+function getCurrentUser() {
+    const saved = localStorage.getItem(AUTH_USER_KEY);
+
+    if (!saved) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(saved);
+    } catch (error) {
+        localStorage.removeItem(AUTH_USER_KEY);
+        return null;
+    }
+}
+
+function isAdmin() {
+    const user = getCurrentUser();
+
+    return user && user.role === 'admin';
+}
+
+function getRoleName(role) {
+    return role === 'admin' ? 'администратор' : 'клиент';
+}
+
+function hideAdminLinks() {
+    const links = document.querySelectorAll('a[href="part-requests.html"], a[href="logs.html"]');
+
+    links.forEach(function (link) {
+        link.classList.add('hidden');
+    });
+}
+
+function showAccessDenied(tableBodyId, colspan) {
+    const tableBody = document.getElementById(tableBodyId);
+
+    if (tableBody) {
+        tableBody.innerHTML = `<tr><td colspan="${colspan}">Доступ только для администратора</td></tr>`;
+    }
+}
 
 function initRequestForm() {
     const form = document.getElementById('requestForm');
@@ -313,6 +430,11 @@ function initRequestActions() {
             return;
         }
 
+        if (!isAdmin()) {
+            alert('Менять статус может только администратор.');
+            return;
+        }
+
         const requestId = Number(event.target.dataset.id);
         const request = requests.find(function (item) {
             return item.id === requestId;
@@ -430,7 +552,9 @@ function renderRequestsTable(requests) {
 
     requests.forEach(function (request) {
         const row = document.createElement('tr');
-        const action = request.status === 'Принято'
+        const action = !isAdmin()
+            ? '-'
+            : request.status === 'Принято'
             ? '-'
             : `<button type="button" class="accept-request" data-id="${request.id}">Принять</button>`;
 
@@ -471,6 +595,11 @@ function initPartRequestsPage() {
     const tableBody = document.getElementById('partRequestsTableBody');
 
     if (!tableBody) {
+        return;
+    }
+
+    if (!isAdmin()) {
+        showAccessDenied('partRequestsTableBody', 5);
         return;
     }
 
@@ -553,6 +682,35 @@ function renderPartRequests(items) {
 
         tableBody.appendChild(row);
     });
+}
+
+function initLogsPage() {
+    const logsBox = document.getElementById('logsBox');
+
+    if (!logsBox) {
+        return;
+    }
+
+    if (!isAdmin()) {
+        logsBox.textContent = 'Доступ к логам есть только у администратора.';
+        return;
+    }
+
+    fetch(LOGS_API_URL)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (lines) {
+            if (lines.length === 0) {
+                logsBox.textContent = 'Логов пока нет.';
+                return;
+            }
+
+            logsBox.textContent = lines.join('\n');
+        })
+        .catch(function () {
+            logsBox.textContent = 'Не удалось загрузить логи.';
+        });
 }
 
 function markError(field) {

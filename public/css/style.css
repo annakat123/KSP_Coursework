@@ -31,6 +31,12 @@ nav a:hover {
     text-decoration: underline;
 }
 
+.user-label {
+    display: inline-block;
+    margin-top: 8px;
+    color: #dce7f2;
+}
+
 main {
     max-width: 950px;
     margin: 24px auto;
@@ -138,6 +144,15 @@ table button {
 
 .part-message.error {
     color: #b00020;
+}
+
+.log-box {
+    min-height: 220px;
+    padding: 12px;
+    overflow: auto;
+    background: #101820;
+    color: #e7eef5;
+    white-space: pre-wrap;
 }
 
 table {

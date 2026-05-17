@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/storage.php';
+require_once __DIR__ . '/logger.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -62,6 +63,7 @@ if ($method === 'POST') {
         sendJson(['error' => 'Не удалось сохранить заявку'], 500);
     }
 
+    writeLog('Создана заявка', '№' . $newRequest['id'] . ', техника: ' . $newRequest['vehicle']);
     sendJson($newRequest, 201);
 }
 
@@ -90,6 +92,7 @@ if ($method === 'PATCH') {
                 sendJson(['error' => 'Не удалось обновить заявку'], 500);
             }
 
+            writeLog('Изменен статус заявки', '№' . $requestId . ', статус: ' . $newStatus);
             sendJson($request);
         }
     }

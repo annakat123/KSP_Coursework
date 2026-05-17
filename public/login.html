@@ -14,6 +14,7 @@
             <a href="request.html">Новая заявка</a>
             <a href="requests.html">Список заявок</a>
             <a href="part-requests.html">Новые детали</a>
+            <a href="logs.html">Логи</a>
             <a href="login.html">Вход</a>
         </nav>
     </header>
@@ -21,8 +22,8 @@
     <main>
         <section>
             <h2>Авторизация</h2>
-            <form action="#" method="post">
-                <!-- Simple demo login form -->
+            <form action="#" method="post" id="loginForm">
+                <!-- Учебный вход, без настоящей базы пользователей -->
                 <p>
                     <label for="email">Email</label><br>
                     <input type="email" id="email" name="email" placeholder="user@mail.ru" required>
@@ -42,12 +43,14 @@
                 </p>
 
                 <button type="submit">Войти</button>
+                <button type="button" id="logoutButton">Выйти</button>
+                <p id="loginMessage" class="form-message"></p>
             </form>
         </section>
     </main>
 
     <footer>
-        <p>Проверка логина будет добавлена в серверной части.</p>
+        <p>Роль пока сохраняется в браузере через LocalStorage.</p>
     </footer>
 
     <script src="js/app.js"></script>
