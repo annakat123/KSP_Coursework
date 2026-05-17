@@ -33,11 +33,12 @@ function initAuth() {
 
     if (user) {
         label.textContent = `Пользователь: ${user.email} (${getRoleName(user.role)})`;
+        nav.appendChild(label);
+        nav.appendChild(createLogoutButton());
     } else {
         label.textContent = 'Вход не выполнен';
+        nav.appendChild(label);
     }
-
-    nav.appendChild(label);
 }
 
 function initLoginForm() {
@@ -81,10 +82,28 @@ function initLoginForm() {
     });
 
     logoutButton.addEventListener('click', function () {
-        localStorage.removeItem(AUTH_USER_KEY);
+        logout();
         showMessage(message, 'Вы вышли из системы.', false);
         form.password.value = '';
     });
+}
+
+function createLogoutButton() {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'logout-link';
+    button.textContent = 'Выйти';
+
+    button.addEventListener('click', function () {
+        logout();
+        window.location.href = 'login.html';
+    });
+
+    return button;
+}
+
+function logout() {
+    localStorage.removeItem(AUTH_USER_KEY);
 }
 
 function getCurrentUser() {

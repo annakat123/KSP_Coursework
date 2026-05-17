@@ -34,7 +34,17 @@ nav a:hover {
 .user-label {
     display: inline-block;
     margin-top: 8px;
+    margin-right: 10px;
     color: #dce7f2;
+}
+
+.logout-link {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: white;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 main {
