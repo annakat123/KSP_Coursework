@@ -127,6 +127,15 @@ function isAdmin() {
     return user && user.role === 'admin';
 }
 
+function getAuthHeaders() {
+    const user = getCurrentUser();
+
+    return {
+        'Content-Type': 'application/json',
+        'X-User-Role': user ? user.role : ''
+    };
+}
+
 function getRoleName(role) {
     return role === 'admin' ? 'администратор' : 'клиент';
 }
@@ -468,9 +477,7 @@ function initRequestActions() {
 function updateRequestStatus(requestId, status) {
     fetch(REQUESTS_API_URL, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
             id: requestId,
             status: status
@@ -651,9 +658,7 @@ function loadPartRequests() {
 function addPartFromRequest(requestId) {
     fetch(PART_REQUESTS_API_URL, {
         method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
             id: requestId
         })
