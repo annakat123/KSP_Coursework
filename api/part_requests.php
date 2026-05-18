@@ -13,6 +13,8 @@ if ($method === 'GET') {
 }
 
 if ($method === 'PATCH') {
+    requireAdmin();
+
     $data = json_decode(file_get_contents('php://input'), true);
     $requestId = (int)($data['id'] ?? 0);
 
@@ -84,4 +86,13 @@ function sendJson(array $data, int $statusCode = 200): void
     http_response_code($statusCode);
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+function requireAdmin(): void
+{
+    $role = $_SERVER['HTTP_X_USER_ROLE'] ?? '';
+
+    if ($role !== 'admin') {
+        sendJson(['error' => 'Действие доступно только администратору'], 403);
+    }
 }
